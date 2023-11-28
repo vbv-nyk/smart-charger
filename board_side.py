@@ -4,11 +4,8 @@ import machine
 import time
 import network
 
-def smart_charge(charge):
-	if(charge == -1):
-		print("Device not connected to the internet")
-		return
-	if charge <= 90:
+def smart_charge(should_charge):
+	if should_charge:
 		print("Charging your device")
 		relay_pin = machine.Pin(5, machine.Pin.OUT)
 	else:
@@ -18,28 +15,22 @@ def smart_charge(charge):
 
 def get_battery():
     try:
-	response = urequests.get('http://192.168.0.108:8080/battery-stats',timeout=5000)
+	response = urequests.get('http://192.168.157.217:8080/battery-stats',timeout=5000)
 	if response.status_code == 200:
             data = ujson.loads(response.text)
             print("Response Type:", type(response))
             print("Response Text:", response.text)
             print("Parsed Response Type:", type(data))
-            if 'battery' in data:
-                print("Battery Level:", data['battery'])
-                return data['battery']
-            else:
-                print("No 'battery' field in the response")
-                return -1
-        else:
-            print("Request failed with status code:", response.status_code)
-            return -1
-
+            return data["should_charge"]
+	else:
+            print("No 'battery' field in the response")
+            return False
     except Exception as e:
         print("Exception occurred:", e)
 
 
-ssid = "ACT102618905398_2g"
-password = "52996826"
+ssid = "moto"
+password = "12345678"
 
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
@@ -53,7 +44,7 @@ print("Connected to WiFi")
 
 
 while(True):
-	charge = get_battery()
-	print(charge)
-	smart_charge(charge)
+	should_charge = get_battery()
+	print(should_charge)
+	smart_charge(should_charge)
 	time.sleep(2)
