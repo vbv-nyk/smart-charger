@@ -4,6 +4,10 @@ import machine
 import time
 import network
 
+ip_address = "192.168.157.68"
+ssid = "moto"
+password = "12345678"
+
 def smart_charge(should_charge):
 	if should_charge:
 		print("Charging your device")
@@ -15,7 +19,7 @@ def smart_charge(should_charge):
 
 def get_battery():
     try:
-	response = urequests.get('http://192.168.157.217:8080/battery-stats',timeout=5000)
+	response = urequests.get(f'http://{ip_address}:8080/battery-stats',timeout=5000)
 	if response.status_code == 200:
             data = ujson.loads(response.text)
             print("Response Type:", type(response))
@@ -28,9 +32,6 @@ def get_battery():
     except Exception as e:
         print("Exception occurred:", e)
 
-
-ssid = "moto"
-password = "12345678"
 
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)

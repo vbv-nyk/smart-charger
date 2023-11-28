@@ -6,12 +6,12 @@ import customtkinter as ctk
 from sys import exit
 import time
 
-
+ip_address = "192.168.157.68"
 ll = ""
 ul = ""
 def u_submit(root, name, lb, ub):
     if lb.get().isnumeric() and ub.get().isnumeric() and int(ub.get()) > int(lb.get()):
-        requests.post("http://localhost:8080/change-bounds", {
+        requests.post(f"http://{ip_address}:8080/change-bounds", {
             "lower_limit": int(lb.get()),
             "upper_limit": int(ub.get())
         })
@@ -31,7 +31,7 @@ def u_submit(root, name, lb, ub):
 def increase_trigger(root, popupLabel, stop_button, continue_button):
     # Perform necessary actions when continuing charging
 
-    requests.post("http://localhost:8080/change-bounds", {
+    requests.post(f"http://{ip_address}:8080/change-bounds", {
         "lower_limit": int(1),
         "upper_limit": int(100)
     })
@@ -60,7 +60,7 @@ def update_ul(event):
 def check_bounds():
     battery = psutil.sensors_battery()
     percent = battery.percent
-    data = requests.post("http://localhost:8080/update-battery", {
+    data = requests.post(f"http://{ip_address}:8080/update-battery", {
         "laptop_battery": percent
     })
     data = data.json()
